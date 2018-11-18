@@ -1,22 +1,26 @@
-package deepdive.cnm.edu.penniesv10;
+package deepdive.cnm.edu.penniesv10.view.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuView.ItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
+import deepdive.cnm.edu.penniesv10.R;
 import deepdive.cnm.edu.penniesv10.model.db.PenniesDB;
 import deepdive.cnm.edu.penniesv10.model.entities.User;
+import deepdive.cnm.edu.penniesv10.view.activities.fragments.PennyPopper;
 import java.util.List;
+import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
@@ -24,32 +28,41 @@ public class MainActivity extends AppCompatActivity
   private User user;
   private PenniesDB db;
 
+  private int rows = 1;
+  private int cols = 1;
+
+  private NavigationView navigationView;
+  private DrawerLayout drawer;
+  private Toolbar toolbar;
+  private Menu menu;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    //Create a database for the App
+    drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    navigationView = (NavigationView) findViewById(R.id.nav_view);
+    toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+    //Create a database and user for the App
     db = PenniesDB.getInstance(getApplicationContext());
     new QueryUser().execute();
 
 
-      Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
       setSupportActionBar(toolbar);
 
-      DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
       ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
           this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
       drawer.addDrawerListener(toggle);
       toggle.syncState();
 
-      NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
       navigationView.setItemIconTintList(null);
       navigationView.setNavigationItemSelectedListener(this);
+
 
   }
   @Override
   public void onBackPressed() {
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     if (drawer.isDrawerOpen(GravityCompat.START)) {
       drawer.closeDrawer(GravityCompat.START);
     } else {
@@ -84,19 +97,52 @@ public class MainActivity extends AppCompatActivity
   public boolean onNavigationItemSelected(MenuItem item) {
     // Handle navigation view item clicks here.
     switch (item.getItemId()){
-      //TODO add cases
+      case R.id.penny:
+
+//        Bundle bundle = new Bundle();
+//        bundle.putInt("rows", rows);
+//        bundle.putInt("cols", cols);
+//        PennyPopper pennyPopper = new PennyPopper();
+//        pennyPopper.setArguments(bundle);
+//        switchFragment(pennyPopper, true, "penny_popper");
+        break;
+
     }
 
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);
     return true;
   }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+
+
+  private void switchFragment(Fragment fragment, boolean useStack, String variant) {
+    FragmentManager manager = getSupportFragmentManager();
+    String tag = fragment.getClass().getSimpleName() + ((variant != null) ? variant : "");
+    if (manager.findFragmentByTag(tag) != null) {
+      manager.popBackStackImmediate(tag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+    FragmentTransaction transaction = manager.beginTransaction();
+    transaction.replace(R.id.fragment_container, fragment, tag);
+    if (useStack) {
+      transaction.addToBackStack(tag);
+    }
+    transaction.commit();
+  }
+
 
   private class QueryUser extends AsyncTask<Void, Void, User> {
 
     @Override
     protected void onPostExecute(User user) {
-      MainActivity.this.user = user;
+      setUser(user);
     }
 
     @Override
@@ -105,7 +151,6 @@ public class MainActivity extends AppCompatActivity
       List<User> users = db.getUserDao().select();
       if (users.isEmpty()) {
         user = new User();
-        user.setCoins(10000);
         long id = db.getUserDao().insert(user);
         user = db.getUserDao().select(id);
       } else {
@@ -114,4 +159,5 @@ public class MainActivity extends AppCompatActivity
       return user;
     }
   }
+
 }
