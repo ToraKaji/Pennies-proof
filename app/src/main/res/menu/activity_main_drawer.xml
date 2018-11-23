@@ -7,9 +7,11 @@
   <group android:checkableBehavior="single">
 
     <item
-      android:id="@+id/penny"
       android:title="Penny Pop"
       android:icon="@drawable/penny_popper_icon"/>
+    <item android:id="@+id/three" android:title="3x3" android:visible="true"/>
+    <item android:id="@+id/four" android:title="4x4" android:visible="true"/>
+    <item android:id="@+id/five" android:title="5x5" android:visible="true"/>
   </group>
 
   <item android:title="Communicate">

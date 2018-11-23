@@ -28,17 +28,16 @@ public class MainActivity extends AppCompatActivity
   private User user;
   private PenniesDB db;
 
-  private int rows = 1;
-  private int cols = 1;
-
   private NavigationView navigationView;
   private DrawerLayout drawer;
   private Toolbar toolbar;
-  private Menu menu;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+
     drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     navigationView = (NavigationView) findViewById(R.id.nav_view);
     toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -74,7 +73,6 @@ public class MainActivity extends AppCompatActivity
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
-
     return true;
   }
 
@@ -96,15 +94,29 @@ public class MainActivity extends AppCompatActivity
   @Override
   public boolean onNavigationItemSelected(MenuItem item) {
     // Handle navigation view item clicks here.
+    Bundle bundle = new Bundle();
+    PennyPopper pennyPopper = new PennyPopper();
     switch (item.getItemId()){
-      case R.id.penny:
 
-//        Bundle bundle = new Bundle();
-//        bundle.putInt("rows", rows);
-//        bundle.putInt("cols", cols);
-//        PennyPopper pennyPopper = new PennyPopper();
-//        pennyPopper.setArguments(bundle);
-//        switchFragment(pennyPopper, true, "penny_popper");
+      case R.id.three:
+        bundle.putInt("rows", 3);
+        bundle.putInt("cols", 3);
+        pennyPopper.setArguments(bundle);
+        switchFragment(pennyPopper, true, "penny_popper");
+        break;
+
+      case R.id.four:
+        bundle.putInt("rows", 4);
+        bundle.putInt("cols", 4);
+        pennyPopper.setArguments(bundle);
+        switchFragment(pennyPopper, true, "penny_popper");
+        break;
+
+      case R.id.five:
+        bundle.putInt("rows", 5);
+        bundle.putInt("cols", 5);
+        pennyPopper.setArguments(bundle);
+        switchFragment(pennyPopper, true, "penny_popper");
         break;
 
     }
